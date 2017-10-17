@@ -1,6 +1,6 @@
 import './styles/base.less';
 
-import {Confirm, Alert, Toast, Notify, Loading} from './components/dialog1';
+import {Confirm, Alert, Toast, Notify, Loading} from './components/dialog';
 import {Layout} from './components/layout';
 import {Button, ButtonGroup} from './components/button';
 import {NavBar, NavBarBackIcon, NavBarNextIcon} from './components/navbar';
