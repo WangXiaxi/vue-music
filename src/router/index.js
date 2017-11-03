@@ -7,27 +7,29 @@ import Search from 'components/search/search'
 
 Vue.use(Router)
 
+const routes = [
+  {
+    path: '/',
+    redirect: '/reacommend'
+  },
+  {
+    path: '/reacommend',
+    component: Reacommend
+  },
+  {
+    path: '/singer',
+    component: Singer
+  },
+  {
+    path: '/rank',
+    component: Rank
+  },
+  {
+    path: '/search',
+    component: Search
+  }
+]
+
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      redirect: '/recommend'
-    },
-    {
-      path: '/reacommend',
-      component: Reacommend
-    },
-    {
-      path: '/singer',
-      component: Singer
-    },
-    {
-      path: '/rank',
-      component: Rank
-    },
-    {
-      path: '/search',
-      component: Search
-    }
-  ]
+  routes
 })
