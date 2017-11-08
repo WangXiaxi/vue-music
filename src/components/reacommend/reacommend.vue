@@ -3,11 +3,11 @@
     <scroll class="recommend-content" ref="scroll" :data="discList">
       <div> <!-- scroll inner -->
         <div class="swiper-inner">
-          <swiper v-if="ifLoadSiwper" :options="swiperOption" >  
+          <swiper v-if="ifLoadSiwper" :options="swiperOption" ref="mySwiper">  
             <!-- 这部分放你要渲染的那些内容 -->  
             <swiper-slide v-for="item in recommends">
               <a>
-                <img @load="loadImage" :src="item.picUrl">
+                <img @click="goUrl(item.linkUrl)" @load="loadImage" :src="item.picUrl">
               </a>
             </swiper-slide>  
             <!-- 这是轮播的小圆点 -->  
@@ -18,9 +18,9 @@
           推荐歌单
         </div>
         <div class="discList">
-          <li v-for="item in discList">
+          <li @click="" v-for="item in discList">
             <div class="le">
-              <img @load="loadImage2" :src="item.imgurl">
+              <img v-lazy="item.imgurl">
             </div>
             <div class="ri">
               <h3>{{item.creator.name}}</h3>
@@ -66,15 +66,23 @@
           this.checkLoaded = true
         }
       },
-      loadImage2 () {
-        this.$refs.scroll.refresh()
+      goUrl (url) {
+        window.location.href = url
       }
-
     },
     components: {
       swiper,
       swiperSlide,
       Scroll
+    },
+    watch: {
+      $route () {
+        if (this.$route.path === '/reacommend') {
+          this.$refs.mySwiper.swiper.startAutoplay()
+        } else {
+          this.$refs.mySwiper.swiper.stopAutoplay()
+        }
+      }
     },
     data () {
       return {
@@ -99,7 +107,13 @@
   }
 </script>
 
+<style lang="stylus" rel="stylesheet/stylus">
+  .swiper-pagination-bullet-active
+    background: #fff
+</style>
+
 <style scoped lang="stylus" rel="stylesheet/stylus">
+   @import "~common/stylus/variable"
   .swiper-inner
     .swiper-slide
       a
@@ -117,7 +131,46 @@
       height: 100%
       overflow: hidden
       .disclist-tit
-        text-align: center
+        text-align: left
+        padding-left: 10px
+        padding-top: 4px
         line-height: 44px
-        
+        color: $color-highlight-background
+      .discList
+        position: relative
+        &>li
+          margin: 0 10px
+          display: flex
+          display: -webkit-box
+          display: -ms-flexbox
+          background: $color-text
+          margin-bottom: 10px
+          .le
+            width: 90px
+            height: 90px
+            img
+              width: 100%
+              height: 100%
+          .ri
+            flex: 1
+            -webkit-box-flex: 1
+            -ms-flex: 1
+            padding-left: 10px
+            h3
+              font-size: $font-size-medium-x
+              line-height: 30px
+              margin-top: 5px
+              color: $color-dialog-background
+              overflow: hidden
+              text-overflow: ellipsis
+              white-space: nowrap
+            .des
+              font-size: $font-size-small
+              color: $color-background-999
+              line-height: 18px
+              margin-top: 4px
+              display: -webkit-box
+              -webkit-box-orient: vertical
+              -webkit-line-clamp: 2
+              overflow: hidden
 </style>

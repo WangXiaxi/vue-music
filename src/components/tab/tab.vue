@@ -22,6 +22,7 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   .tab
+    background: $color-text
     display: flex
     height: 44px
     line-height: 44px
@@ -29,11 +30,20 @@
     .tab-item
       flex: 1
       text-align: center
+      position: relative
       .tab-link
         padding-bottom: 5px
-        color: $color-text-l
+        color: $color-dialog-background
+        
       &.router-link-active
+        &::after
+          content: ' '
+          position: absolute
+          bottom: 0
+          width: 100%
+          height: 2px
+          background: $color-theme
+          left: 0
         .tab-link
           color: $color-theme
-          border-bottom: 2px solid $color-theme
 </style>

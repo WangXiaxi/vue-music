@@ -44,8 +44,8 @@
         this.scroll && this.scroll.disenable()
       },
       refresh () {
-        this.scroll.refresh()
-      },
+        this.scroll && this.scroll.refresh()
+      }
     },
     watch: {
       data () {
