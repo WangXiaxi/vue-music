@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll class="recommend-content" ref="scroll" :data="discList">
+    <scroll class="recommend-content" :listen-scroll="listenScroll" ref="scroll" :data="discList">
       <div> <!-- scroll inner -->
         <div class="swiper-inner">
           <swiper v-if="ifLoadSiwper" :options="swiperOption" ref="mySwiper">  
@@ -87,6 +87,7 @@
     data () {
       return {
         recommends: [],
+        listenScroll: true,
         discList: [],
         swiperOption: {
         // 是一个组件自有属性，如果notNextTick设置为true，组件则不会通过NextTick来实例化swiper，也就意味着你可以在第一时间获取到swiper对象，假如你需要刚加载遍使用获取swiper对象来做什么事，那么这个属性一定要是true
@@ -113,7 +114,7 @@
 </style>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-   @import "~common/stylus/variable"
+  @import "~common/stylus/variable"
   .swiper-inner
     .swiper-slide
       a
