@@ -3,7 +3,9 @@
     <m-header></m-header>
     <tab></tab>
       <keep-alive>
-        <router-view class="animated fadeIn"></router-view>
+        <transition name="slide">
+          <router-view></router-view>
+        </transition>
       </keep-alive>
   </div>
 </template>
@@ -21,14 +23,8 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  .animated
-    animation-duration:1s
-    animation-fill-mode:both
-  .fadeIn
-    animation-name:fadeIn
-  @keyframes fadeIn
-    0%
-      opacity: 0
-    to
-      opacity: 1
+  .slide-enter-active,.slide-leave-active
+    transition: all 0.3s
+  .slide-enter,.slide-leave-to
+    opacity: 0
 </style>

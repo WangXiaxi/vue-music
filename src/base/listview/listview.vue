@@ -3,7 +3,7 @@
     <div class="list">
       <dl v-for="itemBig in data" class="singer-inner" ref="listGroup">
         <dt>{{itemBig.name}}</dt>
-        <dd v-for="item in itemBig.items">{{item.name}}</dd>
+        <dd v-for="item in itemBig.items" @click="selectItem(item)">{{item.name}}</dd>
       </dl>
     </div>
 
@@ -81,6 +81,9 @@
       },
       _addTit (index) {
         this.$refs.fixTit.innerText = this.data[index].name
+      },
+      selectItem (item) {
+        this.$emit('select', item)
       }
     },
     watch: {
