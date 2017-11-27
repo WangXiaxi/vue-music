@@ -96,16 +96,14 @@
         }
       },
       scrollY (Y) { // 括号里是新值
-        // console.log(-Y)
+        let fixedTop = 0
+        let disPlay = 'block'
         for (let i = 0; i < this.listHeight.length - 2; i++) {
           if (-Y + 1 >= this.listHeight[i] && -Y + 1 < this.listHeight[i + 1]) { // 保留一个像素协调
             this.curIndex = i
           }
-
           if (-Y + 1 >= this.listHeight[i] - TIT_HEIGHT && -Y + 1 < this.listHeight[i]) { // 保留一个像素协调
-            this.$refs.fixTit.style.transform = 'translateY(' + (this.listHeight[i] + Y - TIT_HEIGHT) + 'px)'
-          } else if ((-Y + 1) >= this.listHeight[i]) {
-            this.$refs.fixTit.style.transform = 'translateY(0)'
+            fixedTop = this.listHeight[i] + Y - TIT_HEIGHT
           }
         }
         if (-Y >= this.listHeight[this.listHeight.length - 1]) {
@@ -113,8 +111,10 @@
         }
         if (-Y < this.listHeight[0]) {
           this.curIndex = 0
+          disPlay = 'none'
         }
-
+        this.$refs.fixTit.style.transform = 'translateY(' + fixedTop + 'px)'
+        this.$refs.fixTit.style.display = disPlay
         this._addTit(this.curIndex)
       }
     }
