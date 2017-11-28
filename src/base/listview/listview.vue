@@ -20,7 +20,6 @@
   import Scroll from 'base/scroll/scroll'
   const ANCHOR_HEIGHT = 16
   const TIT_HEIGHT = 16
-  console.log(TIT_HEIGHT)
   export default {
     components: {
       Scroll
