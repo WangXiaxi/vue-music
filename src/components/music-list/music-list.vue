@@ -12,7 +12,7 @@
               :listen-scroll="listenScroll" 
               :probe-type="probeType" class="music-content" @scroll="scroll" ref="scroll">
         <div class="list">
-          <div v-if="songs.length>0" v-for="(item,index) in songs" @click="goOpenMusic(item.id)">{{index}}{{item.name}}</div>
+          <div v-if="songs.length>0" v-for="(item,index) in songs" @click="goOpenMusic(item)">{{index}}{{item.name}}</div>
         </div>
       </scroll>
     </div>
@@ -20,6 +20,7 @@
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
+  import {mapMutations} from 'vuex'
 
   const TITHEIGHT = 40
 
@@ -61,9 +62,12 @@
       goBack () {
         this.$router.back()
       },
-      goOpenMusic (id) {
-        console.log(id)
-      }
+      goOpenMusic (item) {
+        this.setSingInfo(item)
+      },
+      ...mapMutations({
+        setSingInfo: 'SET_SINGINFO'
+      })
     },
     mounted () {
       this.imageHeight = this.$refs.bgImage.clientHeight

@@ -2,22 +2,25 @@
   <div id="app" @touchmove.prevent>
     <m-header></m-header>
     <tab></tab>
-      <keep-alive>
-        <transition name="slide">
-          <router-view></router-view>
-        </transition>
-      </keep-alive>
+    <keep-alive>
+      <transition name="slide">
+        <router-view></router-view>
+      </transition>
+    </keep-alive>
+    <play-song></play-song>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import MHeader from 'components/m-header/m-header'
   import Tab from 'components/tab/tab'
+  import playSong from 'components/play-song/play-song'
 
   export default {
     components: {
       MHeader,
-      Tab
+      Tab,
+      playSong
     }
   }
 </script>
