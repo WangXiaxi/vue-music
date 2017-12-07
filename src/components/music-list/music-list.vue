@@ -87,6 +87,7 @@
 
 <style scoped lang="stylus" type="stylesheet/stylus">
   @import "~common/stylus/variable"
+  @import "~common/stylus/mixin"
 
   .go-back
     position: absolute
@@ -117,7 +118,8 @@
       width: 40px
       height: 40px
       z-index: 1
-      background: url(http://static.i360mall.com/h5/images/t014c7a9a806382db2a.png) 50% 50% no-repeat
+      background: 50% 50% no-repeat
+      bg-image('goback')
       background-size: 10px
       opacity: 0.8
   .bg-image
