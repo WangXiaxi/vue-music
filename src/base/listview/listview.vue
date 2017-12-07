@@ -57,7 +57,7 @@
         })
       },
       _clickGoHeight (index) {
-        this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 300)
+        this.$refs.scroll.scrollToElement(this.$refs.listGroup[index]) // 采取滑动会导致位移不准
       },
       _startHeight (e) {
         this.touch.Y1 = e.touches[0].pageY
@@ -95,6 +95,7 @@
         }
       },
       scrollY (Y) { // 括号里是新值
+        console.log(Y)
         let fixedTop = 0
         let disPlay = 'block'
         for (let i = 0; i < this.listHeight.length - 2; i++) {

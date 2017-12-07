@@ -12,7 +12,7 @@
               :listen-scroll="listenScroll" 
               :probe-type="probeType" class="music-content" @scroll="scroll" ref="scroll">
         <div class="list">
-          <div v-if="songs.length>0" v-for="(item,index) in songs">{{index}}</div>
+          <div v-if="songs.length>0" v-for="(item,index) in songs" @click="goOpenMusic(item.id)">{{index}}{{item.name}}</div>
         </div>
       </scroll>
     </div>
@@ -21,7 +21,7 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
 
-  // const TITHEIGHT = 40
+  const TITHEIGHT = 40
 
   export default {
     props: {
@@ -60,11 +60,15 @@
       },
       goBack () {
         this.$router.back()
+      },
+      goOpenMusic (id) {
+        console.log(id)
       }
     },
     mounted () {
       this.imageHeight = this.$refs.bgImage.clientHeight
       this.$refs.scroll.$el.style.top = `${this.imageHeight}px`
+      this.maxTop = -(this.imageHeight - TITHEIGHT)
     },
     created () {
     },
@@ -73,13 +77,22 @@
     },
     watch: {
       scrollY (Y) {
-        if (Y < 0) {
-          this.$refs.bgBlack.style.transform = `translateY(${Y}px)`
-          console.log(Y)
-        } else {
-          let percent = 1 + Y / this.imageHeight
-          this.$refs.bgBlack.style.transform = `transcale(${percent})`
+        let percent = 1
+        let top = '70%'
+        let zIndex = 0
+        let moveY = Y
+        if (Y > 0) { // 伸缩
+          percent = 1 + Math.abs(Y / this.imageHeight)
         }
+        if (Y < this.maxTop) { // 判断当前背景是否需要移动
+          moveY = this.top
+          zIndex = 99
+          top = TITHEIGHT + 'px'
+        }
+        this.$refs.bgImage.style.paddingTop = top
+        this.$refs.bgImage.style.zIndex = zIndex
+        this.$refs.bgImage.style.transform = `scale(${percent})`
+        this.$refs.bgBlack.style.transform = `translateY(${moveY}px)`
       }
     }
   }
@@ -127,7 +140,7 @@
     padding-top: 70%
     background-size: 100% auto
     position: relative
-    
+    transform-origin:50% 0
     .filter
       position: absolute
       top: 0
@@ -140,8 +153,10 @@
     top: 0
     bottom: 0
     width: 100%
-    background: $color-background
+    background: transparent
     z-index: 2
+    .list
+      color: #999
   .bg-black
     width: 100%
     height: 100%
