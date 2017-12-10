@@ -64,10 +64,13 @@
       },
       goOpenMusic (item) {
         this.setSingInfo(item)
+        this.setIfShowPlay('block')
       },
       ...mapMutations({
-        setSingInfo: 'SET_SINGINFO'
+        setSingInfo: 'SET_SINGINFO',
+        setIfShowPlay: 'SET_IFSHOWPLAY'
       })
+
     },
     mounted () {
       this.imageHeight = this.$refs.bgImage.clientHeight

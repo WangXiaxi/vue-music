@@ -6,6 +6,9 @@ const matutaions = {
   },
   [types.SET_SINGINFO] (state, singInfo) {
     state.singInfo = singInfo
+  },
+  [types.SET_IFSHOWPLAY] (state, ifShowPlay) {
+    state.ifShowPlay = ifShowPlay
   }
 }
 

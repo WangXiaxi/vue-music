@@ -1,6 +1,7 @@
 const state = {
   singer: {},
-  singInfo: {}
+  singInfo: {},
+  ifShowPlay: 'none'
 }
 
 export default state
