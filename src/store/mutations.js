@@ -14,7 +14,7 @@ const matutaions = {
     state.playList.push(list)
   }
   // [types.SET_DEL_PLAYLIST] (state, ID) {
-  //   state.playList = 
+  //   state.playList = id
   // }
 }
 
