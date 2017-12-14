@@ -5,7 +5,7 @@
         <div class="back" @click="goBack"></div>
       </div>
       <div class="bg-image" :style="bgStyle" ref="bgImage">
-        <div class="filter"></div>
+        <div class="filter" ref="filter"></div>
       </div>
       <div class="bg-black" ref="bgBlack"></div>
       <scroll :data="songs"
@@ -20,9 +20,12 @@
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
-  import {mapMutations} from 'vuex'
+  import {mapMutations, mapGetters} from 'vuex'
+  import {prefixStyle} from 'common/js/dom'
 
   const TITHEIGHT = 40
+  const transform = prefixStyle('transform')
+  const backdrop = prefixStyle('backdrop-filter')
 
   export default {
     props: {
@@ -53,7 +56,10 @@
     computed: {
       bgStyle () {
         return `background-image:url(${this.bgImage})`
-      }
+      },
+      ...mapGetters([
+        'playList'
+      ])
     },
     methods: {
       scroll (pos) {
@@ -63,12 +69,23 @@
         this.$router.back()
       },
       goOpenMusic (item) {
+        let ifExist = 0
+        this.playList.forEach((itemIn, index) => {
+          if (itemIn['id'] === item['id']) {
+            this.setCurrentIndex(index)
+            ifExist = 1
+          }
+        })
+        if (!ifExist) {
+          this.setAddPlayList(item)
+          this.setCurrentIndex(this.playList.length)
+        }
         this.setSingInfo(item)
-        this.setIfShowPlay('block')
       },
       ...mapMutations({
         setSingInfo: 'SET_SINGINFO',
-        setIfShowPlay: 'SET_IFSHOWPLAY'
+        setCurrentIndex: 'SET_CURRENTINDEX',
+        setAddPlayList: 'SET_ADD_PLAYLIST'
       })
 
     },
@@ -88,8 +105,11 @@
         let top = '70%'
         let zIndex = 0
         let moveY = Y
+        let blur = 0
         if (Y > 0) { // 伸缩
           percent = 1 + Math.abs(Y / this.imageHeight)
+        } else {
+          blur = Math.min(20 * Math.abs(Y / this.imageHeight), 20)
         }
         if (Y < this.maxTop) { // 判断当前背景是否需要移动
           moveY = this.top
@@ -98,8 +118,14 @@
         }
         this.$refs.bgImage.style.paddingTop = top
         this.$refs.bgImage.style.zIndex = zIndex
-        this.$refs.bgImage.style.transform = `scale(${percent})`
-        this.$refs.bgBlack.style.transform = `translateY(${moveY}px)`
+        this.$refs.bgImage.style[transform] = `scale(${percent})`
+        this.$refs.bgBlack.style[transform] = `translateY(${moveY}px)`
+        this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+      },
+      playList (playList) { // 检测是否有播放器
+        const bottom = playList.length > 0 ? '60px' : ''
+        this.$refs.scroll.$el.style['bottom'] = bottom
+        this.$refs.scroll.refresh()
       }
     }
   }
@@ -116,14 +142,6 @@
     right: 0
     height: 40px
     z-index: 100
-    .filter
-      position: absolute
-      top: 0
-      left: 0
-      right: 0
-      bottom: 0
-      background: rgba(0, 0, 0, .3)
-      z-index: -1
     .tit
       width: 100%
       height: 100%

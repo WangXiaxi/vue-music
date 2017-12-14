@@ -9,11 +9,11 @@
   export default {
     computed: {
       ifShowStyle () {
-        console.log(111)
-        return `display:${this.ifShowPlay}`
+        let ifShow = this.playList.length > 0 ? 'block' : 'none'
+        return `display: ${ifShow}`
       },
       ...mapGetters([
-        'ifShowPlay'
+        'playList'
       ])
     },
     methods: {
@@ -27,8 +27,8 @@
     bottom: 0
     left: 0
     right: 0
-    height: 80px
-    // background: red
+    height: 60px
+    background: red
     z-index: 100
     display: none
 </style>

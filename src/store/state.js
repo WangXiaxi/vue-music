@@ -1,7 +1,9 @@
 const state = {
   singer: {},
   singInfo: {},
-  ifShowPlay: 'none'
+  playing: false,
+  playList: [], // 播放列表 数组格式
+  currentIndex: -1
 }
 
 export default state

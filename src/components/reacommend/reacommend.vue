@@ -12,7 +12,7 @@
             </swiper-slide>  
             <!-- 这是轮播的小圆点 -->  
             <div class="swiper-pagination" slot="pagination"></div>  
-          </swiper>  
+          </swiper>
         </div>
         <div class="disclist-tit">
           推荐歌单
