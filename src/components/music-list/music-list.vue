@@ -20,7 +20,7 @@
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
-  import {mapMutations, mapGetters} from 'vuex'
+  import {mapGetters, mapActions} from 'vuex'
   import {prefixStyle} from 'common/js/dom'
 
   const TITHEIGHT = 40
@@ -62,6 +62,11 @@
       ])
     },
     methods: {
+      handlePlaylist (playList) {
+        const bottom = playList.length > 0 ? '60px' : ''
+        this.$refs.scroll.$el.style['bottom'] = bottom
+        this.$refs.scroll.refresh()
+      },
       scroll (pos) {
         this.scrollY = pos.y
       },
@@ -72,24 +77,21 @@
         let ifExist = 0
         this.playList.forEach((itemIn, index) => {
           if (itemIn['id'] === item['id']) {
-            this.setCurrentIndex(index)
             ifExist = 1
           }
         })
         if (!ifExist) {
-          this.setAddPlayList(item)
-          this.setCurrentIndex(this.playList.length)
+          // 方法 添加歌到列表的方法
+          this.addSong(item)
         }
-        this.setSingInfo(item)
       },
-      ...mapMutations({
-        setSingInfo: 'SET_SINGINFO',
-        setCurrentIndex: 'SET_CURRENTINDEX',
-        setAddPlayList: 'SET_ADD_PLAYLIST'
-      })
+      ...mapActions([
+        'addSong'
+      ])
 
     },
     mounted () {
+      this.handlePlaylist(this.playList)
       this.imageHeight = this.$refs.bgImage.clientHeight
       this.$refs.scroll.$el.style.top = `${this.imageHeight}px`
       this.maxTop = -(this.imageHeight - TITHEIGHT)
@@ -123,9 +125,7 @@
         this.$refs.filter.style[backdrop] = `blur(${blur}px)`
       },
       playList (playList) { // 检测是否有播放器
-        const bottom = playList.length > 0 ? '60px' : ''
-        this.$refs.scroll.$el.style['bottom'] = bottom
-        this.$refs.scroll.refresh()
+        this.handlePlaylist(playList)
       }
     }
   }

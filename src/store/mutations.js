@@ -1,4 +1,4 @@
-import * as types from './mutation-type'
+import * as types from './mutation-types'
 
 const matutaions = {
   [types.SET_SINGER] (state, singer) {
@@ -10,12 +10,15 @@ const matutaions = {
   [types.SET_CURRENTINDEX] (state, currentIndex) {
     state.currentIndex = currentIndex
   },
-  [types.SET_ADD_PLAYLIST] (state, list) {
-    state.playList.push(list)
+  [types.SET_PLAYLIST] (state, playList) {
+    state.playList = playList
+  },
+  [types.SET_FULLSCREEN] (state, flag) {
+    state.fullscreen = flag
+  },
+  [types.SET_PLAYING] (state, flag) {
+    state.playing = flag
   }
-  // [types.SET_DEL_PLAYLIST] (state, ID) {
-  //   state.playList = id
-  // }
 }
 
 export default matutaions

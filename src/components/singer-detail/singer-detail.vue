@@ -39,6 +39,7 @@
         })
       },
       _normalizeSongs (list) {
+        console.log(list)
         let ret = []
         list.forEach((item) => {
           let {musicData} = item  // 引用

@@ -18,8 +18,10 @@
 
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
+  import {mapGetters} from 'vuex'
   const ANCHOR_HEIGHT = 16
   const TIT_HEIGHT = 16
+
   export default {
     components: {
       Scroll
@@ -42,7 +44,20 @@
         default: []
       }
     },
+    computed: {
+      ...mapGetters([
+        'playList'
+      ])
+    },
+    mounted () {
+      this.handlePlaylist(this.playList)
+    },
     methods: {
+      handlePlaylist (playList) {
+        const bottom = playList.length > 0 ? '60px' : ''
+        this.$refs.scroll.$el.style['bottom'] = bottom
+        this.$refs.scroll.refresh()
+      },
       scroll (pos) {
         this.scrollY = pos.y
       },
@@ -116,6 +131,9 @@
         this.$refs.fixTit.style.transform = 'translateY(' + fixedTop + 'px)'
         this.$refs.fixTit.style.display = disPlay
         this._addTit(this.curIndex)
+      },
+      playList (playList) {
+        this.handlePlaylist(playList)
       }
     }
   }
@@ -125,10 +143,11 @@
   @import "~common/stylus/variable"
   
   .singer-content
-    width: 100%
-    height: 100%
     overflow: hidden
-    position: relative
+    position: fixed
+    width: 100%
+    top: 88px
+    bottom: 0
   .list
     dl
       dt

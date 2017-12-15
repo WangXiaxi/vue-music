@@ -38,13 +38,25 @@
   import {getRecommend, getDiscList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
   import {swiper, swiperSlide} from 'vue-awesome-swiper'
+  import {mapGetters} from 'vuex'
 
   export default {
     created () {
       this._getRecommend()
       this._getDiscList()
     },
+    computed: {
+      ...mapGetters([
+        'playList'
+      ])
+    },
     methods: {
+      handlePlaylist (playList) {
+        console.log(playList)
+        const bottom = playList.length > 0 ? '60px' : ''
+        this.$refs.recommend.style['bottom'] = bottom
+        this.$refs.scroll.refresh()
+      },
       _getRecommend () {
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
@@ -75,6 +87,9 @@
       swiperSlide,
       Scroll
     },
+    mounted () {
+      this.handlePlaylist(this.playList)
+    },
     watch: {
       $route () {
         if (this.$route.path === '/reacommend') {
@@ -82,6 +97,9 @@
         } else {
           this.$refs.mySwiper.swiper.stopAutoplay()
         }
+      },
+      playList (playList) {
+        this.handlePlaylist(playList)
       }
     },
     data () {
