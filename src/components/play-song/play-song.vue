@@ -12,6 +12,11 @@
         </div>
         <div class="lyrics">
         </div>
+
+        <div class="control">
+          <div class="icon-list"></div>
+          <div class="icon-play"></div>
+        </div>
       </div>
     </div>
     <div class="mini-play">
@@ -39,16 +44,12 @@
     methods: {
       _getLyric () {
         this.singInfo.getLyric().then((lyric) => {
-          console.log(lyric)
-          if (this.currentSong.lyric !== lyric) {
+          if (this.singInfo.lyric !== lyric) {
             return
           }
           this.currentLyric = lyric
-        }).catch((xxx) => {
-          console.log(xxx)
+        }).catch(() => {
           this.currentLyric = null
-          this.playingLyric = ''
-          this.currentLineNum = 0
         })
       },
       closeFullscreen () {
@@ -128,7 +129,7 @@
       position: absolute
       left: 10px
       top: 70px
-      bottom: 60px
+      bottom: 80px
       right: 10px
       background: rgba(255, 255, 255, .75)
   .mini-play
