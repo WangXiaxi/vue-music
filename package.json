@@ -20,7 +20,8 @@
     "axios": "^0.16.0",
     "better-scroll": "^1.4.0",
     "vue-lazyload": "^1.0.3",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "js-base64": "^2.1.9"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

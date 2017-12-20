@@ -1,19 +1,20 @@
 <template>
-  <scroll class="singer-content" :listen-scroll="listenScroll" :probe-type="probeType" @scroll='scroll' ref="scroll">
-    <div class="list">
-      <dl v-for="itemBig in data" class="singer-inner" ref="listGroup">
-        <dt>{{itemBig.name}}</dt>
-        <dd v-for="item in itemBig.items" @click="selectItem(item)">{{item.name}}</dd>
-      </dl>
-    </div>
+  <div>
+    <scroll class="singer-content" :listen-scroll="listenScroll" :probe-type="probeType" @scroll='scroll' ref="scroll">
+      <div class="list">
+        <dl v-for="itemBig in data" class="singer-inner" ref="listGroup">
+          <dt>{{itemBig.name}}</dt>
+          <dd v-for="item in itemBig.items" @click="selectItem(item)">{{item.name}}</dd>
+        </dl>
+      </div>
 
-    <div class="fix-list" @touchmove.stop.prevent="_moveHeight" @touchstart.stop.prevent="_startHeight">
+      <div class="fix-tit" ref="fixTit">
+      </div>
+    </scroll>
+    <div class="fix-list" @touchmove.stop.prevent="_moveHeight" @touchstart.stop.prevent="_startHeight" ref="fixList">
       <div v-for="(item, index) in data" @touchstart="_clickGoHeight(index)" :data-index="index" :class="{'cur':index === curIndex}" ref="listTrigger">{{item.name.substring(0,1)}}</div>
     </div>
-
-    <div class="fix-tit" ref="fixTit">
-    </div>
-  </scroll>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -55,8 +56,10 @@
     methods: {
       handlePlaylist (playList) {
         const bottom = playList.length > 0 ? '60px' : ''
+        const fixBottom = playList.length > 0 ? 'calc(50% + 30px)' : '50%'
         this.$refs.scroll.$el.style['bottom'] = bottom
         this.$refs.scroll.refresh()
+        this.$refs.fixList.style['bottom'] = fixBottom
       },
       scroll (pos) {
         this.scrollY = pos.y
@@ -158,10 +161,11 @@
     position: fixed
     color: $color-text
     right: 0
-    top: 50%
+    bottom: 50%
+    z-index: 1
     padding:10px 0
     border-radius: 10px
-    transform: translateY(-50%)
+    transform: translateY(50%)
     font-size: $font-size-small
     line-height: $font-size-medium-x
     background: rgba(0, 0, 0, 0.1)

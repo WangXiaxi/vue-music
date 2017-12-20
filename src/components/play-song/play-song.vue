@@ -1,8 +1,18 @@
 <template>
   <div class="play-song" v-show="playList.length>0">
-    <div class="normal-play" v-show="fullscreen">
+    <div class="normal-play" v-show="fullscreen" >
+      <div class="blurBg" :style="normalPlayStyle"><div class="black"></div></div>
       <i class="goback" @click="closeFullscreen"></i>
       <div class="play-tit">{{singInfo.name}}</div>
+      <div class="author">{{singInfo.singer}}</div>
+      <div class="middle-part">
+        <div class="rotate-part">
+          <div class="rotate-img"></div>
+          <div class="rotate-lyrics"></div>
+        </div>
+        <div class="lyrics">
+        </div>
+      </div>
     </div>
     <div class="mini-play">
       
@@ -12,8 +22,12 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters, mapMutations} from 'vuex'
+
   export default {
     computed: {
+      normalPlayStyle () {
+        return `background-image:url(${this.singInfo.image})`
+      },
       ...mapGetters([
         'playList',
         'fullscreen',
@@ -21,9 +35,22 @@
       ])
     },
     mounted () {
-      console.log(this.playList)
     },
     methods: {
+      _getLyric () {
+        this.singInfo.getLyric().then((lyric) => {
+          console.log(lyric)
+          if (this.currentSong.lyric !== lyric) {
+            return
+          }
+          this.currentLyric = lyric
+        }).catch((xxx) => {
+          console.log(xxx)
+          this.currentLyric = null
+          this.playingLyric = ''
+          this.currentLineNum = 0
+        })
+      },
       closeFullscreen () {
         this.setFullscreen(false)
       },
@@ -33,6 +60,12 @@
       ...mapMutations({
         setFullscreen: 'SET_FULLSCREEN'
       })
+    },
+    watch: {
+      singInfo (newSong) {
+        console.log(newSong)
+        this._getLyric()
+      }
     }
   }
 </script>
@@ -48,7 +81,22 @@
     right: 0
     bottom: 0
     z-index: 120
-    background: rgba(0, 0, 0, 0.4)
+    
+    .blurBg
+      position: absolute
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      z-index: -1
+      background: 50% 50% no-repeat
+      background-size: auto 100%
+      -webkit-filter: blur(15px)
+      -webkit-transform: scale(1.15)
+      .black
+        width: 100%
+        height: 100%
+        background: rgba(0, 0, 0, .6)
     .goback
       display: block
       width: 40px
@@ -61,13 +109,34 @@
       bg-image('goback')
       background-size: 10px
       transform: rotate(-90deg)
-      
+    .play-tit
+      height: 40px
+      font-size: $font-size-medium-x
+      line-height: 40px
+      text-align: center
+      padding-left: 40px
+      padding-right: 40px
+      no-wrap()
+    .author
+      height: 30px
+      font-size: $font-size-medium
+      line-height: 30px
+      color: $color-text-ll
+      text-align: center
+      no-wrap()
+    .middle-part
+      position: absolute
+      left: 10px
+      top: 70px
+      bottom: 60px
+      right: 10px
+      background: rgba(255, 255, 255, .75)
   .mini-play
     position: fixed
     left: 0
     right: 0
     bottom: 0
-    z-index: 119
+    z-index: 110
     height: 60px
     background: rgba(157, 145, 133, 0.4)
 </style>
