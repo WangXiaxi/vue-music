@@ -12,14 +12,24 @@
         </div>
         <div class="lyrics">
         </div>
-
-        <div class="control">
+      </div>
+      <div class="control">
           <div class="icon-list"></div>
           <div class="icon-play"></div>
+          <div class="progress-bar-box">
+            <div class="progress-bar">
+              <div class="progress-bar-inner"></div>
+            </div>
+            <div class="pub-time cur-time">
+              00:30
+            </div>
+            <div class="pub-time all-time">
+              03:30
+            </div>
+          </div>
         </div>
-      </div>
     </div>
-    <div class="mini-play">
+    <div class="mini-play" v-show="!fullscreen">
       
     </div>
   </div>
@@ -132,6 +142,62 @@
       bottom: 80px
       right: 10px
       background: rgba(255, 255, 255, .75)
+    .control
+      position: absolute
+      bottom: 0
+      left: 0
+      z-index: 3
+      width: 100%
+      height: 80px
+      .icon-list
+        position: absolute
+        top: 0
+        left: 10px
+        background: url(./sprite_play.png) no-repeat
+        background-size: 100% auto
+        background-position: 9px -228px
+        width: 40px
+        height: 40px
+      .icon-play
+        position: absolute
+        right: 10px
+        top: 0
+        background: url(./sprite_play.png) no-repeat
+        background-size: 100% auto
+        background-position: 7px 10px
+        width: 40px
+        height: 40px
+      .progress-bar-box
+        position: absolute
+        left: 0
+        bottom: 0
+        right: 0
+        height: 40px
+        .pub-time
+          width: 55px
+          height: 40px
+          font-size: $font-size-small
+          line-height: 40px
+          text-align: center
+          position: absolute
+          color: $color-text-l
+          top: 0
+          &.cur-time
+            left: 0
+          &.all-time
+            right: 0
+        .progress-bar
+          position: absolute
+          top: 19px
+          left: 55px
+          right: 55px
+          bottom: 19px
+          border-radius: 1px
+          background: $color-text-l
+        .progress-bar-inner
+          width: 100%
+          height: 100%
+          background: $color-theme
   .mini-play
     position: fixed
     left: 0
