@@ -5,26 +5,40 @@
       <i class="goback" @click="closeFullscreen"></i>
       <div class="play-tit">{{singInfo.name}}</div>
       <div class="author">{{singInfo.singer}}</div>
-      <div class="middle-part">
-        <div class="rotate-part">
-          <div class="rotate-img"></div>
-          <div class="rotate-lyrics"></div>
-        </div>
-        <div class="lyrics">
-        </div>
+      <div class="middle-part" @touchstart.prevent="middleTouchStart"
+                               @touchend.prevent="middleTouchEnd">
+        <transition name="slide">
+          <div v-if="ifCd" class="rotate-part">
+            <div class="rotate-img"></div>
+            <div class="rotate-lyrics">
+              
+            </div>
+          </div>
+        </transition>
+        <transition name="slide">
+          <scroll v-if="!ifCd && currentLyric" class="lyrics" ref="lyricList" :data="currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div>
+                <p ref="lyricLine"
+                   class="text"
+                   v-for="(line, index) in currentLyric.lines">{{line.txt}}</p>
+              </div>
+            </div>
+          </scroll>
+        </transition>
       </div>
       <div class="control">
           <div class="icon-list"></div>
-          <div class="icon-play"></div>
+          <div @click.stop="playSong" :class="disCls" class="icon-play"></div>
           <div class="progress-bar-box">
             <div class="progress-bar">
               <div class="progress-bar-inner"></div>
             </div>
-            <div class="pub-time cur-time">
-              00:30
+            <div class="pub-time cur-time" ref="curTimeText">
+              {{format(curTime)}}
             </div>
-            <div class="pub-time all-time">
-              03:30
+            <div class="pub-time all-time" ref="allTimeText">
+              {{format(singInfo.duration)}}
             </div>
           </div>
         </div>
@@ -32,24 +46,45 @@
     <div class="mini-play" v-show="!fullscreen">
       
     </div>
+
+    <audio :src="singInfo.url" ref="audio" @error="error" @timeupdate="upTime"></audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import {mapGetters, mapMutations} from 'vuex'
+  import Lyric from 'lyric-parser'
+  import Scroll from 'base/scroll/scroll'
+  import {isIos} from 'common/js/dom'
 
+  const ISIOS = isIos()
   export default {
+    components: {
+      Scroll
+    },
     computed: {
+      disCls () { // 根据歌曲是否开始 执行 是否添加act
+        return this.playing ? 'act' : ''
+      },
       normalPlayStyle () {
         return `background-image:url(${this.singInfo.image})`
       },
       ...mapGetters([
         'playList',
         'fullscreen',
-        'singInfo'
+        'singInfo',
+        'playing'
       ])
     },
     mounted () {
+    },
+    data () {
+      return {
+        currentLyric: null,
+        curTime: 0,
+        ifCd: true, // 判断是否是cd还是歌词
+        middleTouch: {} // 记录
+      }
     },
     methods: {
       _getLyric () {
@@ -57,10 +92,50 @@
           if (this.singInfo.lyric !== lyric) {
             return
           }
-          this.currentLyric = lyric
+          this.currentLyric = new Lyric(lyric)
+          console.log(this.currentLyric)
         }).catch(() => {
           this.currentLyric = null
         })
+      },
+      middleTouchStart (e) {
+        const touch = e.touches[0]
+        this.middleTouch.x = touch.pageX
+        this.middleTouch.y = touch.pageY
+        this.middleTouch.time = (new Date()).valueOf()
+      },
+      middleTouchEnd (e) {
+        const touch = e.changedTouches[0]
+        const endX = touch.pageX
+        const endY = touch.pageY
+        const endTime = (new Date()).valueOf()
+        if ((endTime - this.middleTouch.time) < 1000 && Math.abs(endX - this.middleTouch.x) > 100 && Math.abs(endY - this.middleTouch.y) < Math.abs(endX - this.middleTouch.x)) {
+          if (endX < this.middleTouch.x) {
+            this.ifCd = false
+          } else {
+            this.ifCd = true
+          }
+        }
+      },
+      upTime () { // 歌曲触发
+        const audio = this.$refs.audio
+        this.curTime = audio.currentTime
+      },
+      format (time) {  // 转化时间格式
+        time = time | 0
+        let minute = time / 60 | 0
+        let second = time % 60
+        if (second < 10) {
+          second = '0' + second
+        }
+        if (minute < 10) {
+          minute = '0' + minute
+        }
+        return `${minute}:${second}`
+      },
+      error () {
+        this.setPlaying(false)
+        alert('播放失败')
       },
       closeFullscreen () {
         this.setFullscreen(false)
@@ -68,14 +143,33 @@
       openFullscreen () {
         this.setFullscreen(true)
       },
+      playSong () {
+        if (ISIOS && !this.playing) {
+          this.$refs.audio.play()
+        }
+        this.setPlaying(!this.playing)
+      },
       ...mapMutations({
-        setFullscreen: 'SET_FULLSCREEN'
+        setFullscreen: 'SET_FULLSCREEN',
+        setPlaying: 'SET_PLAYING'
       })
     },
     watch: {
       singInfo (newSong) {
-        console.log(newSong)
         this._getLyric()
+        if (ISIOS) {
+          this.setPlaying(!this.playing)
+        } else {
+          this.$nextTick(() => {
+            this.$refs.audio.play()
+          })
+        }
+      },
+      playing (newPlaying) {
+        const audio = this.$refs.audio
+        this.$nextTick(() => {
+          newPlaying ? audio.play() : audio.pause()
+        })
       }
     }
   }
@@ -85,6 +179,12 @@
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
   
+  .slide-enter-active,.slide-leave-active
+    transition: all 0.3s
+  .slide-enter,.slide-leave-to
+    opacity: 0
+    transform: translate3d(100%, 0, 0)
+    
   .normal-play
     position: fixed
     top: 0
@@ -142,6 +242,11 @@
       bottom: 80px
       right: 10px
       background: rgba(255, 255, 255, .75)
+      overflow: hidden
+      .lyrics
+        width: 100%
+        height: 100%
+        overflow: hidden
     .control
       position: absolute
       bottom: 0
@@ -167,6 +272,8 @@
         background-position: 7px 10px
         width: 40px
         height: 40px
+        &.act
+          background-position: 7px -29px
       .progress-bar-box
         position: absolute
         left: 0
@@ -206,4 +313,5 @@
     z-index: 110
     height: 60px
     background: rgba(157, 145, 133, 0.4)
+    
 </style>
