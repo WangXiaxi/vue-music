@@ -18,6 +18,9 @@ const matutaions = {
   },
   [types.SET_PLAYING] (state, flag) {
     state.playing = flag
+  },
+  [types.SET_FIRSTENTER] (state, flag) {
+    state.firstEnter = flag
   }
 }
 

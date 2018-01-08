@@ -4,7 +4,8 @@ const state = {
   playing: false, // 是否播放
   playList: [], // 播放列表 数组格式
   currentIndex: -1,
-  fullscreen: false
+  fullscreen: false,
+  firstEnter: true
 }
 
 export default state

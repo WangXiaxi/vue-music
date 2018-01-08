@@ -15,7 +15,7 @@
             </div>
           </div>
         </transition>
-        <transition name="slide">
+        <transition name="slidez">
           <scroll v-if="!ifCd && currentLyric" class="lyrics" ref="lyricList" :data="currentLyric.lines">
             <div class="lyric-wrapper">
               <div>
@@ -73,7 +73,8 @@
         'playList',
         'fullscreen',
         'singInfo',
-        'playing'
+        'playing',
+        'firstEnter'
       ])
     },
     mounted () {
@@ -93,7 +94,6 @@
             return
           }
           this.currentLyric = new Lyric(lyric)
-          console.log(this.currentLyric)
         }).catch(() => {
           this.currentLyric = null
         })
@@ -134,6 +134,7 @@
         return `${minute}:${second}`
       },
       error () {
+        console.log(this.singInfo)
         this.setPlaying(false)
         alert('播放失败')
       },
@@ -144,20 +145,22 @@
         this.setFullscreen(true)
       },
       playSong () {
-        if (ISIOS && !this.playing) {
+        if (ISIOS && !this.playing && this.firstEnter) {
           this.$refs.audio.play()
+          this.setFirstEnter(false)
         }
         this.setPlaying(!this.playing)
       },
       ...mapMutations({
         setFullscreen: 'SET_FULLSCREEN',
-        setPlaying: 'SET_PLAYING'
+        setPlaying: 'SET_PLAYING',
+        setFirstEnter: 'SET_FIRSTENTER'
       })
     },
     watch: {
       singInfo (newSong) {
         this._getLyric()
-        if (ISIOS) {
+        if (ISIOS && this.firstEnter) {
           this.setPlaying(!this.playing)
         } else {
           this.$nextTick(() => {
@@ -183,7 +186,14 @@
     transition: all 0.3s
   .slide-enter,.slide-leave-to
     opacity: 0
+    transform: translate3d(-100%, 0, 0)
+    
+  .slidez-enter-active,.slidez-leave-active
+    transition: all 0.3s
+  .slidez-enter,.slidez-leave-to
+    opacity: 0
     transform: translate3d(100%, 0, 0)
+    
     
   .normal-play
     position: fixed
@@ -243,10 +253,32 @@
       right: 10px
       background: rgba(255, 255, 255, .75)
       overflow: hidden
+      .rotate-part
+        width: 100%
+        height: 100%
+        overflow: hidden
+        position: absolute
+        top: 0
+        left: 0
+        .rotate-img
+          width: 60%
+          padding-top: 60%
+          background: blue
+          border-radius: 50%
+        .rotate-lyrics
+          position: absolute
+          height: 40px
+          right: 0
+          bottom: 0
+          left: 0
+          background: red
       .lyrics
         width: 100%
         height: 100%
         overflow: hidden
+        position: absolute
+        top: 0
+        left: 0
     .control
       position: absolute
       bottom: 0
