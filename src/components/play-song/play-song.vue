@@ -1,52 +1,60 @@
 <template>
   <div class="play-song" v-show="playList.length>0">
-    <div class="normal-play" v-show="fullscreen" >
-      <div class="blurBg" :style="normalPlayStyle"><div class="black"></div></div>
-      <i class="goback" @click="closeFullscreen"></i>
-      <div class="play-tit">{{singInfo.name}}</div>
-      <div class="author">{{singInfo.singer}}</div>
-      <div class="middle-part" @touchstart.prevent="middleTouchStart"
-                               @touchend.prevent="middleTouchEnd">
-        <transition name="slide">
-          <div v-if="ifCd" class="rotate-part">
-            <div class="rotate-img"></div>
-            <div class="rotate-lyrics">
+    <transition name="opac">
+      <div class="normal-play" v-show="fullscreen" >
+        <div class="blurBg" :style="normalPlayStyle"><div class="black"></div></div>
+        <i class="goback" @click="closeFullscreen"></i>
+        <div class="play-tit">{{singInfo.name}}</div>
+        <div class="author">{{singInfo.singer}}</div>
+        <div class="middle-part" @touchstart.prevent="middleTouchStart"
+                                 @touchend.prevent="middleTouchEnd">
+          <transition name="slide">
+            <div v-if="ifCd" class="rotate-part">
+              <div class="rotate-img-box">
+                <div class="rotate-img" :class="cdPause" :style="normalPlayStyle"></div>
+              </div>
               
-            </div>
-          </div>
-        </transition>
-        <transition name="slidez">
-          <scroll v-if="!ifCd && currentLyric" class="lyrics" ref="lyricList" :data="currentLyric.lines">
-            <div class="lyric-wrapper">
-              <div>
-                <p ref="lyricLine"
-                   class="text"
-                   v-for="(line, index) in currentLyric.lines">{{line.txt}}</p>
+              <div class="rotate-lyrics">
+                {{currentLyricText}}
               </div>
             </div>
-          </scroll>
-        </transition>
-      </div>
-      <div class="control">
-          <div class="icon-list"></div>
-          <div @click.stop="playSong" :class="disCls" class="icon-play"></div>
-          <div class="progress-bar-box">
-            <div class="progress-bar">
-              <div class="progress-bar-inner"></div>
-            </div>
-            <div class="pub-time cur-time" ref="curTimeText">
-              {{format(curTime)}}
-            </div>
-            <div class="pub-time all-time" ref="allTimeText">
-              {{format(singInfo.duration)}}
+          </transition>
+          <transition name="slidez">
+            <div v-if="!ifCd && !currentLyric" class="lyrics-tips">加载中请稍后</div>
+            <scroll v-if="!ifCd && currentLyric" class="lyrics" ref="lyricList" :data="currentLyric.lines">
+              <div class="lyric-wrapper">
+                <div v-if='currentLyric.lines.length > 0'>
+                  <p ref="lyricLine"
+                     class="text"
+                     :class="{'current': currentLineNum === index}"
+                     v-for="(line, index) in currentLyric.lines">{{line.txt}}</p>
+                </div>
+              </div>
+            </scroll>
+          </transition>
+        </div>
+        <div class="control">
+            <div class="icon-list"></div>
+            <div @click.stop="playSong" :class="disCls" class="icon-play"></div>
+            <div class="progress-bar-box">
+              <div class="progress-bar">
+                <div class="progress-bar-inner" :style="curPencent"></div>
+              </div>
+              <div class="pub-time cur-time" ref="curTimeText">
+                {{format(curTime)}}
+              </div>
+              <div class="pub-time all-time" ref="allTimeText">
+                {{format(singInfo.duration)}}
+              </div>
             </div>
           </div>
-        </div>
-    </div>
-    <div class="mini-play" v-show="!fullscreen">
-      
-    </div>
-
+      </div>
+    </transition>
+    <transition name="opac">
+      <div class="mini-play" v-show="!fullscreen">
+        
+      </div>
+    </transition>
     <audio :src="singInfo.url" ref="audio" @error="error" @timeupdate="upTime"></audio>
   </div>
 </template>
@@ -66,6 +74,13 @@
       disCls () { // 根据歌曲是否开始 执行 是否添加act
         return this.playing ? 'act' : ''
       },
+      cdPause () {
+        return this.playing ? '' : 'pause'
+      },
+      curPencent () { // 根据歌曲是否开始 执行 是否添加act
+        let num = this.formatPercent(1 - this.curTime / this.singInfo.duration)
+        return `transform: translate3d(-${num}, 0, 0)`
+      },
       normalPlayStyle () {
         return `background-image:url(${this.singInfo.image})`
       },
@@ -84,7 +99,9 @@
         currentLyric: null,
         curTime: 0,
         ifCd: true, // 判断是否是cd还是歌词
-        middleTouch: {} // 记录
+        middleTouch: {}, // 记录
+        currentLyricText: '',
+        currentLineNum: 0
       }
     },
     methods: {
@@ -95,7 +112,7 @@
           }
           this.currentLyric = new Lyric(lyric)
         }).catch(() => {
-          this.currentLyric = null
+          this.currentLyric = 'null'
         })
       },
       middleTouchStart (e) {
@@ -120,6 +137,14 @@
       upTime () { // 歌曲触发
         const audio = this.$refs.audio
         this.curTime = audio.currentTime
+        if (this.currentLyric) {
+          this.currentLyric.seek(this.curTime * 1000)
+          let num = this.currentLyric.curNum - 1
+          if (num >= 0) {
+            this.currentLineNum = num
+            this.currentLyricText = this.currentLyric.lines[num].txt
+          }
+        }
       },
       format (time) {  // 转化时间格式
         time = time | 0
@@ -132,6 +157,9 @@
           minute = '0' + minute
         }
         return `${minute}:${second}`
+      },
+      formatPercent (num) {
+        return (Math.round(num * 10000) / 100).toFixed(2) + '%'
       },
       error () {
         console.log(this.singInfo)
@@ -160,6 +188,9 @@
     watch: {
       singInfo (newSong) {
         this._getLyric()
+        // 初始化
+        this.currentLyricText = newSong.name
+        this.curTime = 0
         if (ISIOS && this.firstEnter) {
           this.setPlaying(!this.playing)
         } else {
@@ -182,6 +213,11 @@
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
   
+  .opac-enter-active,.opac-leave-active
+    transition: all 0.3s
+  .opac-enter,.opac-leave-to
+    opacity: 0
+
   .slide-enter-active,.slide-leave-active
     transition: all 0.3s
   .slide-enter,.slide-leave-to
@@ -251,7 +287,6 @@
       top: 70px
       bottom: 80px
       right: 10px
-      background: rgba(255, 255, 255, .75)
       overflow: hidden
       .rotate-part
         width: 100%
@@ -260,18 +295,35 @@
         position: absolute
         top: 0
         left: 0
-        .rotate-img
-          width: 60%
-          padding-top: 60%
-          background: blue
+        .rotate-img-box
+          position: absolute
+          top: calc(50% - 20px)
+          left: 50%
+          transform: translate3d(-50%, -50%, 0)
+          width: 70%
+          padding-top: 70%
           border-radius: 50%
+          overflow: hidden
+          .rotate-img
+            position: absolute
+            top: 0
+            left: 0
+            bottom: 0
+            right: 0
+            background: 50% 50% no-repeat
+            background-size: 100%
+            animation: rotate 20s linear infinite
+            &.pause
+              animation-play-state: paused
         .rotate-lyrics
           position: absolute
           height: 40px
           right: 0
           bottom: 0
           left: 0
-          background: red
+          color: $color-theme
+          text-align: center
+          line-height: 40px
       .lyrics
         width: 100%
         height: 100%
@@ -333,6 +385,7 @@
           bottom: 19px
           border-radius: 1px
           background: $color-text-l
+          overflow: hidden
         .progress-bar-inner
           width: 100%
           height: 100%
@@ -345,5 +398,11 @@
     z-index: 110
     height: 60px
     background: rgba(157, 145, 133, 0.4)
+    
+  @keyframes rotate
+      0%
+        transform: rotate(0)
+      100%
+        transform: rotate(360deg)
     
 </style>
