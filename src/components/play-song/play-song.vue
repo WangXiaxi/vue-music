@@ -21,8 +21,8 @@
           </transition>
           <transition name="slidez">
             <div v-if="!ifCd && !currentLyric" class="lyrics-tips">加载中请稍后</div>
-            <scroll v-if="!ifCd && currentLyric" class="lyrics" ref="lyricList" :data="currentLyric.lines">
-              <div class="lyric-wrapper">
+            <scroll v-if="!ifCd && currentLyric" :listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll" class="lyrics" ref="lyricList" :data="currentLyric.lines">
+              <div class="lyric-wrapper" ref="lyricWrapper">
                 <div v-if='currentLyric.lines.length > 0'>
                   <p ref="lyricLine"
                      class="text"
@@ -96,12 +96,16 @@
     },
     data () {
       return {
+        listenScroll: true,
+        probeType: 3,
         currentLyric: null,
         curTime: 0,
         ifCd: true, // 判断是否是cd还是歌词
         middleTouch: {}, // 记录
         currentLyricText: '',
-        currentLineNum: 0
+        currentLineNum: 0,
+        ifScrollY: true, // 是否该移动
+        scrollY: 0
       }
     },
     methods: {
@@ -121,6 +125,9 @@
         this.middleTouch.y = touch.pageY
         this.middleTouch.time = (new Date()).valueOf()
       },
+      scroll (pos) {
+        this.scrollY = pos.y
+      },
       middleTouchEnd (e) {
         const touch = e.changedTouches[0]
         const endX = touch.pageX
@@ -134,6 +141,13 @@
           }
         }
       },
+      cpmputedScroll () {
+        let needElTop = this.$refs.lyricLine[this.currentLineNum + 1].offsetTop
+        let middleTop = 0.5 * this.$refs.lyricWrapper.parentNode.clientHeight
+        let needTop = Math.min(middleTop - needElTop - this.scrollY, 0)
+        console.log(needElTop, this.scrollY, middleTop)
+        return needTop
+      },
       upTime () { // 歌曲触发
         const audio = this.$refs.audio
         this.curTime = audio.currentTime
@@ -143,6 +157,9 @@
           if (num >= 0) {
             this.currentLineNum = num
             this.currentLyricText = this.currentLyric.lines[num].txt
+            if (this.$refs.lyricList) {
+              this.$refs.lyricList.scrollTo(0, this.cpmputedScroll())
+            }
           }
         }
       },
@@ -191,6 +208,7 @@
         // 初始化
         this.currentLyricText = newSong.name
         this.curTime = 0
+        this.currentLineNum = 0
         if (ISIOS && this.firstEnter) {
           this.setPlaying(!this.playing)
         } else {
@@ -331,6 +349,13 @@
         position: absolute
         top: 0
         left: 0
+        text-align: center
+        line-height: 2
+        font-size: 13px
+        .text
+          color: $color-text-l
+          &.current
+            color: $color-theme
     .control
       position: absolute
       bottom: 0
