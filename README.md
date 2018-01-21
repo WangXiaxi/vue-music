@@ -33,3 +33,10 @@ npm run build --report
 
 # 6、vue全家桶安装可参照原视频。
 ```
+## question
+
+``` bash
+# 1、qq音乐audio播放加入了验证参数vkey与guid才能播放, 已经偏离前端我并未做研究，我项目中将这两个参数分离出放在／src/api/config.js文件下，只需到qq音乐audio链接下拷贝就能正常播放。
+
+# 2、audio在ios移动端下无法自动播放问题，解决方法较多，我采取到是首次播放需手动点击播放按钮（比较符合逻辑）。
+```
