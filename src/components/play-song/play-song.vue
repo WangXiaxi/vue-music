@@ -21,7 +21,7 @@
           </transition>
           <transition name="slidez">
             <div v-if="!ifCd && !currentLyric" class="lyrics-tips">加载中请稍后</div>
-            <scroll v-if="!ifCd && currentLyric" :listen-scroll="listenScroll" :probe-type="probeType" @scroll="scroll" class="lyrics" ref="lyricList" :data="currentLyric.lines">
+            <scroll v-if="!ifCd && currentLyric" :listen-scroll="listenScroll" :pullup="pullup" :beforeScroll="beforeScroll" :probe-type="probeType" @scrollToEnd="onScrollToEnd" @beforeScroll="onBeforeScroll" @scroll="scroll" class="lyrics" ref="lyricList" :data="currentLyric.lines">
               <div class="lyric-wrapper" ref="lyricWrapper">
                 <div v-if='currentLyric.lines.length > 0'>
                   <p ref="lyricLine"
@@ -96,6 +96,8 @@
     },
     data () {
       return {
+        beforeScroll: true,
+        pullup: true,
         listenScroll: true,
         probeType: 3,
         currentLyric: null,
@@ -127,6 +129,12 @@
       },
       scroll (pos) {
         this.scrollY = pos.y
+        this.ifScrollY = false
+      },
+      onScrollToEnd () {
+        this.ifScrollY = true
+      },
+      onBeforeScroll () {
       },
       middleTouchEnd (e) {
         const touch = e.changedTouches[0]
@@ -139,13 +147,19 @@
           } else {
             this.ifCd = true
           }
+          this.ifScrollY = true
         }
       },
       cpmputedScroll () {
-        let needElTop = this.$refs.lyricLine[this.currentLineNum + 1].offsetTop
+        let needElTop = this.$refs.lyricLine[this.currentLineNum].offsetTop
         let middleTop = 0.5 * this.$refs.lyricWrapper.parentNode.clientHeight
-        let needTop = Math.min(middleTop - needElTop - this.scrollY, 0)
-        console.log(needElTop, this.scrollY, middleTop)
+        let lyrWHeight = this.$refs.lyricWrapper.clientHeight
+        let needTop = middleTop - needElTop
+        if (Math.abs(needTop) > (lyrWHeight - 2 * middleTop)) {
+          needTop = -(lyrWHeight - 2 * middleTop)
+        } else if (needTop > 0) {
+          needTop = 0
+        }
         return needTop
       },
       upTime () { // 歌曲触发
@@ -157,8 +171,9 @@
           if (num >= 0) {
             this.currentLineNum = num
             this.currentLyricText = this.currentLyric.lines[num].txt
-            if (this.$refs.lyricList) {
-              this.$refs.lyricList.scrollTo(0, this.cpmputedScroll())
+            if (this.$refs.lyricList && this.ifScrollY) {
+              let needTop = this.cpmputedScroll()
+              this.$refs.lyricList.scrollTo(0, needTop, 200, 'easing')
             }
           }
         }
@@ -179,7 +194,6 @@
         return (Math.round(num * 10000) / 100).toFixed(2) + '%'
       },
       error () {
-        console.log(this.singInfo)
         this.setPlaying(false)
         alert('播放失败')
       },
