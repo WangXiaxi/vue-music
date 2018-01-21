@@ -17,18 +17,19 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-总结：
 
-  1、推荐列表如需编写 可以写一个共用music-list的组建，省略。
+## summary
 
-  2、播放列表只需把播放时，歌添加到vuex playList, 省略。
+``` bash
+# 1、推荐列表如需编写 可以写一个共用music-list的组建，省略。
 
-  3、vuex重点，用于页面间交互。
+# 2、播放列表只需把播放时，歌添加到vuex playList, 省略。
 
-  4、better-scroll大致方法都已经用到，起到了学习作用。
+# 3、vuex重点，用于页面间交互。
 
-  5、此项目数据抓取部分是参考原学习视频的方法，其余功能都是由本人独自研究并且开发。
-  
-  6、vue全家桶安装可参照原视频。
+# 4、better-scroll大致方法都已经用到，起到了学习作用。
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+# 5、此项目数据抓取部分是参考原学习视频的方法，其余功能都是由本人独自研究并且开发。
+
+# 6、vue全家桶安装可参照原视频。
+```
