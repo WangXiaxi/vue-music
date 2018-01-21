@@ -20,8 +20,8 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
   import {mapGetters} from 'vuex'
-  const ANCHOR_HEIGHT = 16
-  const TIT_HEIGHT = 16
+  const ANCHOR_HEIGHT = 36
+  const TIT_HEIGHT = 36
 
   export default {
     components: {
@@ -155,8 +155,14 @@
     dl
       dt
         color: $color-highlight-background
+        height: 36px
+        line-height: 36px
+        padding-left: 10px
+        background: #fff
       dd
         color: $color-background-999
+        line-height: 36px
+        padding-left: 16px
   .fix-list
     position: fixed
     color: $color-text
@@ -175,8 +181,14 @@
     div.cur
       color: $color-theme
   .fix-tit
+    display: none
     position: absolute
     top: 0
     color: $color-highlight-background
+    height: 36px
+    line-height: 36px
+    padding-left: 10px
+    background:  #fff
+    width: 100%
 </style>
 

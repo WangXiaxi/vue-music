@@ -10,7 +10,7 @@ Vue.use(Router)
 const routes = [
   {
     path: '/',
-    redirect: '/reacommend'
+    redirect: '/singer'
   },
   {
     path: '/reacommend',

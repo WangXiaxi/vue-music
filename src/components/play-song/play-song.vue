@@ -13,7 +13,6 @@
               <div class="rotate-img-box">
                 <div class="rotate-img" :class="cdPause" :style="normalPlayStyle"></div>
               </div>
-              
               <div class="rotate-lyrics">
                 {{currentLyricText}}
               </div>
@@ -51,8 +50,24 @@
       </div>
     </transition>
     <transition name="opac">
-      <div class="mini-play" v-show="!fullscreen">
-        
+      <div class="mini-play" v-show="!fullscreen" @click="openFullscreen">
+        <div class="bg"></div>
+        <div class="mini-cd" :class="cdPause" :style="normalPlayStyle"></div>
+        <div class="mini-center">
+          <div class="tit">{{singInfo.name}} - {{singInfo.singer}}</div>
+          <div class="progress-bar-box">
+            <div class="progress-bar">
+              <div class="progress-bar-inner" :style="curPencent"></div>
+            </div>
+            <div class="pub-time cur-time" ref="curTimeText">
+              {{format(curTime)}}
+            </div>
+            <div class="pub-time all-time" ref="allTimeText">
+              {{format(singInfo.duration)}}
+            </div>
+          </div>
+        </div>
+        <div class="icon-play" @click.stop="playSong" :class="disCls"></div>
       </div>
     </transition>
     <audio :src="singInfo.url" ref="audio" @error="error" @timeupdate="upTime"></audio>
@@ -436,8 +451,83 @@
     bottom: 0
     z-index: 110
     height: 60px
-    background: rgba(157, 145, 133, 0.4)
-    
+    .bg
+      background: rgba(0, 0, 0, .5)
+      position: absolute
+      left: 0
+      right: 0
+      bottom: 0
+      top: 0
+      opacity: 0.9
+    .mini-cd
+      width: 40px
+      height: 40px
+      background: 50% 50% no-repeat
+      background-size: 100%
+      border-radius: 50%
+      position: absolute
+      top: 10px
+      left: 10px
+      animation: rotate 20s linear infinite
+      &.pause
+        animation-play-state: paused
+    .mini-center
+      position: absolute
+      left: 60px
+      top: 0
+      bottom: 0
+      right: 50px
+      .tit
+        font-size: $font-size-medium
+        line-height: $font-size-large
+        padding-top: 12px
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        color: $color-text-ll
+      .progress-bar-box
+        position: relative
+        left: 0
+        bottom: 0
+        right: 0
+        height: 20px
+        .pub-time
+          width: 32px
+          height: 20px
+          font-size: $font-size-small
+          line-height: 20px
+          text-align: center
+          position: absolute
+          color: $color-text-ll
+          top: 0
+          &.cur-time
+            left: 0
+          &.all-time
+            right: 0
+        .progress-bar
+          position: absolute
+          top: 9px
+          left: 35px
+          right: 35px
+          bottom: 9px
+          border-radius: 1px
+          background: $color-text-l
+          overflow: hidden
+        .progress-bar-inner
+          width: 100%
+          height: 100%
+          background: $color-theme
+    .icon-play
+      position: absolute
+      right: 5px
+      top: 10px
+      background: url(./sprite_play.png) no-repeat
+      background-size: 100% auto
+      background-position: 7px 10px
+      width: 40px
+      height: 40px
+      &.act
+        background-position: 7px -29px
   @keyframes rotate
       0%
         transform: rotate(0)

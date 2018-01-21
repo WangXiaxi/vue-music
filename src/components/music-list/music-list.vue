@@ -12,7 +12,14 @@
               :listen-scroll="listenScroll" 
               :probe-type="probeType" class="music-content" @scroll="scroll" ref="scroll">
         <div class="list">
-          <div v-if="songs.length>0" v-for="(item,index) in songs" @click="goOpenMusic(item)">{{index}}{{item.name}}</div>
+          <div v-if="songs.length>0" class="singer-item" v-for="(item,index) in songs" @click="goOpenMusic(item)">
+            <div class="num">{{index + 1}}</div>
+            <div class="tit-info">
+              {{item.name}}
+              <p class="small">{{item.album}}</p>
+            </div>
+            
+          </div>
         </div>
       </scroll>
     </div>
@@ -181,7 +188,25 @@
     background: transparent
     z-index: 2
     .list
-      color: #999
+      color: $color-dialog-background
+      .singer-item
+        display: -webkit-box
+        .num
+          display: -webkit-box
+          -webkit-box-orient: vertical
+          -webkit-box-pack: center
+          -webkit-box-align: center
+          width: 45px
+        .tit-info
+          -webkit-box-flex: 1
+          padding: 6px 8px
+          line-height: $font-size-large-x
+          .small
+            font-size: $font-size-small
+            color: $color-background-999
+        &:first-child,&:nth-child(2),&:nth-child(3)
+          .num
+            color: red
   .bg-black
     width: 100%
     height: 100%

@@ -18,7 +18,7 @@
           推荐歌单
         </div>
         <div class="discList">
-          <li @click="" v-for="item in discList">
+          <li @click="selectSongClass(item)" v-for="item in discList">
             <div class="le">
               <img v-lazy="item.imgurl">
             </div>
@@ -51,6 +51,9 @@
       ])
     },
     methods: {
+      selectSongClass (item) {
+        console.log(item)
+      },
       handlePlaylist (playList) {
         console.log(playList)
         const bottom = playList.length > 0 ? '60px' : ''
