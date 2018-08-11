@@ -74,7 +74,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import {mapGetters, mapMutations} from 'vuex'
   import Lyric from 'lyric-parser'
   import Scroll from 'base/scroll/scroll'

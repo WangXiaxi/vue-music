@@ -25,7 +25,7 @@
     </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import Scroll from 'base/scroll/scroll'
   import {mapGetters, mapActions} from 'vuex'
   import {prefixStyle} from 'common/js/dom'
@@ -138,7 +138,7 @@
   }
 </script>
 
-<style scoped lang="stylus" type="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
 

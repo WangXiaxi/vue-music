@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import Scroll from 'base/scroll/scroll'
   import {getRecommend, getDiscList} from 'api/recommend'
   import {ERR_OK} from 'api/config'

@@ -4,7 +4,7 @@
   </transition>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   import {mapGetters} from 'vuex'
   import {ERR_OK} from 'api/config'
   import {getSingerDetail} from 'api/singer'
